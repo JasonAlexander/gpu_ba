@@ -5,7 +5,7 @@
 #include "LMalgorithm.h"
 #include "NCGalgorithm.h"
 #include "ResInt.h"
-#include "CalcUtils.h"
+#include "CalcUtilsGPU.h"
 
 using namespace std;
 

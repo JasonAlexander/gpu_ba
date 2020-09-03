@@ -4,8 +4,9 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <cmath>
 
-#include "CalcUtils.h"
+//#include "CalcUtils.h"
 #include "CalcUtilsGPU.h"
 
 class NCGalgorithm

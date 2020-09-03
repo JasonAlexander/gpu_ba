@@ -6,14 +6,7 @@
 #include <iomanip>
 #include <vector>
 
-#include <cuda.h>
-#include <cuda_runtime_api.h>
-
-#include "device_launch_parameters.h"
-
 #include "DataHandler.h"
-#include "Inverse.cuh"
-#include "Solve.cuh"
 
 #define typ double 
 
@@ -65,4 +58,4 @@ namespace CalcUtilsGPU
 
 
 
-};
+}

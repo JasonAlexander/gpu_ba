@@ -10,10 +10,6 @@
 
 
 #include <iomanip>
-#include <cuda.h>
-#include <cuda_runtime_api.h>
-
-#include "device_launch_parameters.h"
 
 
 template<typename T>
@@ -36,7 +32,7 @@ __global__ void solveChol_kernel3(float* Hp, float* dp, float* gp, int batch, fl
 
 	// fetch Input
 	T P[9];
-	int dim = 3;
+//	int dim = 3;
 
 	if(mult)
 	{

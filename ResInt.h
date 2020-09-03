@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-#include "CalcUtils.h"
+//#include "CalcUtils.h"
 #include "CalcUtilsGPU.h"
 
 using namespace std;
@@ -18,7 +18,7 @@ int max_iterationsI;        // max number of inner LM iterations
 int max_iterationsO;        // max number of outer RI iterations
 float gradient_th;          // stop criteria threshold for too small gradient magnitudes; checked in every iteration
 float mse_th;				// stop criteria for a reached specified aim error (error gets below the sse threshold)
-float tau;                  // damping term initial value (high => Gradient descent; low => Gauß-Newton)
+float tau;                  // damping term initial value (high => Gradient descent; low => Gauï¿½-Newton)
 float maxL;					// max lambda scale factor relative to 1 (if multiplicative damping)
 float minL;					// min lambda scale factor relative to 1 (if multiplicative damping)
 bool print_prog;			// print progress? (requires more time)

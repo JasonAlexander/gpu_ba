@@ -63,8 +63,8 @@ bool LMalgorithm::runMinimizer(BAmode im, float*& camera_data, float*& point_dat
 		backsub = false;
 		epi = 0;
 	}
-		
-	char* str = (im == metric)?"metric":"focal_radial";
+
+    const char* str = (im == metric)?"metric":"focal_radial";
 	cout << "Start LMA minimizer with mode: " << str << endl;
 	if(!schur)  cout << "Solving " << "full normal equation (hessian-matrix)" <<endl;
 	if(schur && epi && backsub)  cout << "Solving " << "rcs-system (schur-matrix) with EPI and back-substitution" <<endl;
@@ -320,7 +320,7 @@ bool LMalgorithm::runMinimizer(BAmode im, float*& camera_data, float*& point_dat
 
 	// check device memory for sufficient space //
 	size_t free,total;
-	cuMemGetInfo(&free, &total);
+//	cuMemGetInfo(&free, &total);
 
 	// print final results //
 	cout << ".............................................." << endl;

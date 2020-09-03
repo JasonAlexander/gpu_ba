@@ -1,8 +1,9 @@
 #include "CalcUtilsGPU.h"
+#include "Inverse.cuh"
+#include "Solve.cuh"
 
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
-#include <windows.h>
 
 #include "device_launch_parameters.h"
 
@@ -104,8 +105,8 @@ size_t CalcUtilsGPU::copyDataIntoDevice(float *camera_data, float *point_data,
 	diagdamping = diagdamp;
 	
 
-	size_t used, total;
-	cuMemGetInfo(&used, &total);
+//	size_t used, total;
+//	cuMemGetInfo(&used, &total);
 
 	vector<cudaError_t> err;
 	// allocate input device data
@@ -121,7 +122,7 @@ size_t CalcUtilsGPU::copyDataIntoDevice(float *camera_data, float *point_data,
 	err.push_back(cudaMalloc((void**)&d_grad, sizeof(float)*pv_num));
 
 	// allocate blockdiag of Hessian (Preconditioner) device data
-	int tcp = (ncp==12)?21:45;
+//	int tcp = (ncp==12)?21:45;
 	err.push_back(cudaMalloc((void**)&d_prec_c, sizeof(float)*n_c*(ncp/2)*(ncp/2)));
 	err.push_back(cudaMalloc((void**)&d_prec_p, sizeof(float)*n_p*6));	
 
@@ -134,9 +135,9 @@ size_t CalcUtilsGPU::copyDataIntoDevice(float *camera_data, float *point_data,
 		err.push_back(cudaMalloc((void**)&as, sizeof(float)*pv_num));
 	}
 
-	size_t free;
-	cuMemGetInfo(&free, &total);
-	int mem_used = (used-free)/1024/1024;
+//	size_t free;
+//	cuMemGetInfo(&free, &total);
+//	int mem_used = (used-free)/1024/1024;
 
 	// copy to device
 	cudaMemcpy(d_cams, camera_data, sizeof(float) * 9 * n_c, cudaMemcpyHostToDevice);
@@ -146,11 +147,12 @@ size_t CalcUtilsGPU::copyDataIntoDevice(float *camera_data, float *point_data,
 	cudaMemcpy(d_pidx, ptidx, sizeof(int) * n_obs, cudaMemcpyHostToDevice);
 
 	// set used memory to 0 mb to indicate errors
-	for(int i = 0; i< (int)err.size(); i++) 
-		if(err[i] != cudaSuccess)
-			mem_used = -1;
-
-	return mem_used;
+//	for(int i = 0; i< (int)err.size(); i++)
+//		if(err[i] != cudaSuccess)
+//			mem_used = -1;
+//
+//	return mem_used;
+    return 0;
 
 }
 
@@ -158,15 +160,16 @@ int CalcUtilsGPU::initSolver(Solver solv, int ncp, bool schur, int epi){
 
 	vector<cudaError_t> err;
 
-	int n_block_pv   = (int)( ( (float)(pv_num)/(float)BLOCKSIZE ) +1 );
-	int n_block_pc   = (int)( ( (float)(n_c*n_cam_params/2)/(float)BLOCKSIZE ) +1 );
-	int n_block_pp   = (int)( ( (float)(n_p*3)/(float)BLOCKSIZE ) +1 );
-	int n_block_ovpv = (int)( ( (float)(ov_num + pv_num)/(float)BLOCKSIZE ) +1 ); 
-	int n_block_opv	 = (int)( ( (float)(n_obs + pv_num)/(float)BLOCKSIZE ) +1 ); 
-	int n_block_o    = (int)( ( (float)(ov_num)/(float)BLOCKSIZE ) +1 );
+//	int n_block_pv   = (int)( ( (float)(pv_num)/(float)BLOCKSIZE ) +1 );
+//	int n_block_pc   = (int)( ( (float)(n_c*n_cam_params/2)/(float)BLOCKSIZE ) +1 );
+//	int n_block_pp   = (int)( ( (float)(n_p*3)/(float)BLOCKSIZE ) +1 );
+//	int n_block_ovpv = (int)( ( (float)(ov_num + pv_num)/(float)BLOCKSIZE ) +1 );
+//	int n_block_opv	 = (int)( ( (float)(n_obs + pv_num)/(float)BLOCKSIZE ) +1 );
+//	int n_block_o    = (int)( ( (float)(ov_num)/(float)BLOCKSIZE ) +1 );
 
-	size_t used, total;
-	cuMemGetInfo(&used, &total);
+	size_t used, free;//, total;
+	used = free = 0;//total = 0;
+//	cuMemGetInfo(&used, &total);
 
 	// intermediate parameter vector for temporal error function evaluations
 	err.push_back(cudaMalloc((void**)&Pc_new, sizeof(float)*(9*n_c)));  
@@ -208,8 +211,8 @@ int CalcUtilsGPU::initSolver(Solver solv, int ncp, bool schur, int epi){
 		err.push_back(cudaMalloc((void**)&grad_new, sizeof(float)*(pv_num)));
 	}
 
-	size_t free;
-	cuMemGetInfo(&free, &total);
+//	size_t free;
+//	cuMemGetInfo(&free, &total);
 	int mem_used = (used-free)/1024/1024;
 
 	// set used memory to 0 mb to indicate errors
@@ -228,7 +231,7 @@ __global__ void
 	calcErrorVector_kernel(float *errors, float *cams, float *points, float *obs, int *cidx, int *pidx, int NM, int NC, int NP){
 	
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
-	int tid = threadIdx.x;
+//	int tid = threadIdx.x;
 
 	if(idx>=NM) return;
 	int c_idx = cidx[idx];
@@ -1451,16 +1454,16 @@ __global__ void
 double calcVectorDot(float* v1, float* v2, float* parts, int len)
 {
     const unsigned int  nblock = 32; 
-    int  blen = ((len  + 32 - 1)/ 32 + BLOCKSIZE - 1) / BLOCKSIZE * BLOCKSIZE; 
+    int  blen = ((len  + nblock - 1)/ nblock + BLOCKSIZE - 1) / BLOCKSIZE * BLOCKSIZE;
 
-    calcVectorDot_kernel<<<32, BLOCKSIZE>>>( v1, v2, len, blen, parts);
+    calcVectorDot_kernel<<<nblock, BLOCKSIZE>>>( v1, v2, len, blen, parts);
 
     float h_parts[32];  
-	cudaMemcpy(h_parts, parts, sizeof(float)*32, cudaMemcpyDeviceToHost);
+	cudaMemcpy(h_parts, parts, sizeof(float) * nblock, cudaMemcpyDeviceToHost);
 
     double dot = 0; 
 	
-    for(unsigned int  i = 0; i < 32; ++i) 
+    for(unsigned int  i = 0; i < nblock; ++i)
 		dot += h_parts[i];
 
     return dot;
@@ -1481,7 +1484,7 @@ void CalcUtilsGPU::calcErrorVector_d(float &h_sse, float *c, float *p)
 			d_obs, d_cidx, d_pidx, n_obs, n_c, n_p);
 	}
 
-	int n_block_ov;
+//	int n_block_ov;
 
 	///////// compute dot(p*JtJp)
 
@@ -1559,7 +1562,7 @@ int CalcUtilsGPU::solvePCG_Hessian_d(float lambdaC, float lambdaP, float gmag, i
 	// kernel launch parameter
 	int n_block   = (int)( ( (float)(n_c+n_p)/(float)BLOCKSIZE ) +1 );    // for per param-block kernel
 	int n_block_pv = (int)( ( (float)pv_num/(float)BLOCKSIZE ) +1 );    // for per param vector-entry kernel
-	int n_block_opv = (int)( ( (float)(n_obs+pv_num)/(float)BLOCKSIZE ) +1 );    // for per measurement kernel and param vector-entry kernel
+//	int n_block_opv = (int)( ( (float)(n_obs+pv_num)/(float)BLOCKSIZE ) +1 );    // for per measurement kernel and param vector-entry kernel
 	int n_block_o = (int)( ( (float)(n_obs)/(float)BLOCKSIZE ) +1 );
 
 	// z0 := M^-1 * s0
@@ -1984,7 +1987,7 @@ void CalcUtilsGPU::calcGDstep_d(float &sse, int ncp, int k, float l, int b_reset
 
 		// a= (grad*dp)/(dp*prec*dp)
 		a = (gdp/dpPrdp);
-		if(_isnan(a)) a = 2;
+		if(std::isnan(a)) a = 2;
 	}
 
 	// start a inexact line search on the descent direction

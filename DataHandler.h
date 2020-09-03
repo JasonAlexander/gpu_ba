@@ -4,7 +4,6 @@
 #include <iomanip>
 #include <fstream>
 #include <vector>
-#include <algorithm>
 
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>

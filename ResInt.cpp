@@ -2,7 +2,8 @@
 #include "MBATimer.h"
 #include <iostream>
 #include <iomanip>
-#include <algorithm> 
+#include <algorithm>
+#include <cmath>
 
 
 ResInt::ResInt(int maxIi, int maxIo, float stopcritGradient, float stopcritMSE, bool print_progress, float tauArg, float maxLa, float minLa, bool tracer, bool smsse)
@@ -48,7 +49,7 @@ bool ResInt::runMinimizer(BAmode im, float* camera_data, float* point_data,
 	int nb_P = n_points;
 
 
-	char* str = (im == metric)?"metric":"focal_radial";
+	const char* str = (im == metric)?"metric":"focal_radial";
 	cout << "Start Resection Intersection LMA minimizer with mode: " << str << endl;
 
 	// jacobi non-zero elements in ascending order (from left to right for Transposed J_c) coord-major
@@ -147,8 +148,8 @@ bool ResInt::runMinimizer(BAmode im, float* camera_data, float* point_data,
 					sse = newSSE;
 
 					// decrease lambda
-					lc = max(minlc,lc/1.1);
-					lp = max(minlp,lp/1.1);
+					lc = max(minlc, lc/1.1f);
+					lp = max(minlp, lp/1.1f);
 					v = 1;
 
 					break;
@@ -156,7 +157,7 @@ bool ResInt::runMinimizer(BAmode im, float* camera_data, float* point_data,
 				if(newSSE > sse){
 					
 					//increase lambda
-					v *= 1.1;
+					v *= 1.1f;
 					lc = min(lc*v,maxlc);
 					lp = min(lp*v,maxlp);
 					
@@ -194,7 +195,7 @@ bool ResInt::runMinimizer(BAmode im, float* camera_data, float* point_data,
 	
 	// get max memory //
 	size_t free,total;
-	cuMemGetInfo(&free, &total);
+//	cuMemGetInfo(&free, &total);
 
 	// print final results //
 	cout << ".............................................." << endl;

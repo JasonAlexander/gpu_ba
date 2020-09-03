@@ -1,3 +1,7 @@
+#include <algorithm>
+#include <cmath>
+#include <cstring>
+
 #include "DataHandler.h"
 
 
@@ -370,7 +374,7 @@ bool LoadBundlerModelBAL(char* fname, float*& camera_data, float*& point_data,
 	cout << "...done" << endl;
     return true;
 
-};
+}
 
 void PreProcessing(float*& camera_data, float*& point_data,
               float*& measurements, int*& ptidx, int*& camidx, int& n_measurements, int& n_cameras, int& n_points, bool fix, bool deleteProj, bool reorder)

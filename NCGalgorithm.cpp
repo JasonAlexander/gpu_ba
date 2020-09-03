@@ -80,7 +80,7 @@ bool NCGalgorithm::runMinimizer(BAmode im, float* camera_data, float* point_data
 	// evaluate initial stop condition
 	stop = (  (sse/n_measurements <= mse_th ) ); // (gradMag/n_measurements <= gradient_th) || 
 
-	char* str = (im == metric)?"metric":"focal_radial";
+    const char* str = (im == metric)?"metric":"focal_radial";
 	cout << "Start Nonlinear Conjugate Gradient minimizer with mode: " << str << endl;
 
 	while(!stop && k<maxIter)
@@ -123,7 +123,7 @@ bool NCGalgorithm::runMinimizer(BAmode im, float* camera_data, float* point_data
 
 	// check device memory for sufficient space //
 	size_t free,total;
-	cuMemGetInfo(&free, &total);
+//	cuMemGetInfo(&free, &total);
 
 	cout << ".............................................." << endl;
 	cout << "Optimization finished after " << time_elapsed  << "s \n";

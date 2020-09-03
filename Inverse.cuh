@@ -32,10 +32,12 @@
 #pragma once
 
 #include <iomanip>
-#include <cuda.h>
-#include <cuda_runtime_api.h>
 
-#include "device_launch_parameters.h"
+//#include <cuda_runtime.h>
+//#include <cuda_runtime_api.h>
+//#include <curand_kernel.h>
+//#include <driver_types.h>
+//#include <device_launch_parameters.h>
 
 #define USE_PIVOTING   0
 
@@ -97,8 +99,8 @@ __global__ void matinv_3x3 (float *A, float *B, int batch, float l, bool mult)
 {
     const int blkNum = blockIdx.y * gridDim.x + blockIdx.x;
     const int thrdNum = blkNum * blockDim.x + threadIdx.x;
-    int perm0, perm1, perm2;
-    int icol0, icol1, icol2;
+//    int perm0, perm1, perm2;
+//    int icol0, icol1, icol2;
     T AA00, AA01, AA02; 
     T AA10, AA11, AA12;
     T AA20, AA21, AA22;
@@ -125,9 +127,9 @@ __global__ void matinv_3x3 (float *A, float *B, int batch, float l, bool mult)
         AA22 = (T)A[5 * batch + thrdNum];
 			if(mult) AA22 = (AA22+ (AA22*l)); else AA22 += l;
 
-        perm0 = 0;
-        perm1 = 1;
-        perm2 = 2;
+//        perm0 = 0;
+//        perm1 = 1;
+//        perm2 = 2;
         
         /****************** iteration 0 ***********/
 
@@ -160,7 +162,7 @@ __global__ void matinv_3x3 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA00);
-        icol0 = perm0;
+//        icol0 = perm0;
         AA00 = tmp;
         AA01 = mulOp (tmp, AA01);
         AA02 = mulOp (tmp, AA02);
@@ -197,7 +199,7 @@ __global__ void matinv_3x3 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA11);
-        icol1 = perm1;
+//        icol1 = perm1;
         AA10 = mulOp (tmp, AA10);
         AA11 = tmp;
         AA12 = mulOp (tmp, AA12);
@@ -217,7 +219,7 @@ __global__ void matinv_3x3 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA22);
-        icol2 = perm2;
+//        icol2 = perm2;
         AA20 = mulOp (tmp, AA20);
         AA21 = mulOp (tmp, AA21);
         AA22 = tmp;
@@ -260,8 +262,8 @@ __global__ void matinv_6x6 (float *A, float *B, int batch, float l, bool mult)
 {
     const int blkNum = blockIdx.y * gridDim.x + blockIdx.x;
     const int thrdNum = blkNum * blockDim.x + threadIdx.x;
-    int perm0, perm1, perm2, perm3, perm4, perm5;
-    int icol0, icol1, icol2, icol3, icol4, icol5;
+//    int perm0, perm1, perm2, perm3, perm4, perm5;
+//    int icol0, icol1, icol2, icol3, icol4, icol5;
     T AA00, AA01, AA02, AA03, AA04, AA05;
     T AA10, AA11, AA12, AA13, AA14, AA15;
     T AA20, AA21, AA22, AA23, AA24, AA25;
@@ -326,19 +328,19 @@ __global__ void matinv_6x6 (float *A, float *B, int batch, float l, bool mult)
         AA55 = (T)A[20 * batch + thrdNum];
 			if(mult) AA55 = (AA55+ (AA00*l)); else AA55 += l;
 
-        perm0 = 0;
-        perm1 = 1;
-        perm2 = 2;
-        perm3 = 3;
-        perm4 = 4;
-        perm5 = 5;
+//        perm0 = 0;
+//        perm1 = 1;
+//        perm2 = 2;
+//        perm3 = 3;
+//        perm4 = 4;
+//        perm5 = 5;
         
         /****************** iteration 0 ***********/
 
 
         /* scale current row */
         tmp = rcpOp (AA00);
-        icol0 = perm0;
+//        icol0 = perm0;
         AA00 = tmp;
         AA01 = mulOp (tmp, AA01);
         AA02 = mulOp (tmp, AA02);
@@ -447,7 +449,7 @@ __global__ void matinv_6x6 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA11);
-        icol1 = perm1;
+//        icol1 = perm1;
         AA10 = mulOp (tmp, AA10);
         AA11 = tmp;
         AA12 = mulOp (tmp, AA12);
@@ -544,7 +546,7 @@ __global__ void matinv_6x6 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA22);
-        icol2 = perm2;
+//        icol2 = perm2;
         AA20 = mulOp (tmp, AA20);
         AA21 = mulOp (tmp, AA21);
         AA22 = tmp;
@@ -629,7 +631,7 @@ __global__ void matinv_6x6 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA33);
-        icol3 = perm3;
+//        icol3 = perm3;
         AA30 = mulOp (tmp, AA30);
         AA31 = mulOp (tmp, AA31);
         AA32 = mulOp (tmp, AA32);
@@ -702,7 +704,7 @@ __global__ void matinv_6x6 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA44);
-        icol4 = perm4;
+//        icol4 = perm4;
         AA40 = mulOp (tmp, AA40);
         AA41 = mulOp (tmp, AA41);
         AA42 = mulOp (tmp, AA42);
@@ -755,7 +757,7 @@ __global__ void matinv_6x6 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA55);
-        icol5 = perm5;
+//        icol5 = perm5;
         AA50 = mulOp (tmp, AA50);
         AA51 = mulOp (tmp, AA51);
         AA52 = mulOp (tmp, AA52);
@@ -849,8 +851,8 @@ __global__ void matinv_9x9 (float *A, float *B, int batch, float l, bool mult)
 {
     const int blkNum = blockIdx.y * gridDim.x + blockIdx.x;
     const int thrdNum = blkNum * blockDim.x + threadIdx.x;
-    int perm0, perm1, perm2, perm3, perm4, perm5, perm6, perm7, perm8;
-    int icol0, icol1, icol2, icol3, icol4, icol5, icol6, icol7, icol8;
+//    int perm0, perm1, perm2, perm3, perm4, perm5, perm6, perm7, perm8;
+//    int icol0, icol1, icol2, icol3, icol4, icol5, icol6, icol7, icol8;
     T AA00, AA01, AA02, AA03, AA04, AA05, AA06, AA07, AA08;
     T AA10, AA11, AA12, AA13, AA14, AA15, AA16, AA17, AA18;
     T AA20, AA21, AA22, AA23, AA24, AA25, AA26, AA27, AA28;
@@ -969,15 +971,15 @@ __global__ void matinv_9x9 (float *A, float *B, int batch, float l, bool mult)
         AA88 = (T)A[44 * batch + thrdNum];
 			if(mult) AA88 = (AA88+ (AA88*l)); else AA88 += l;
 
-        perm0 = 0;
-        perm1 = 1;
-        perm2 = 2;
-        perm3 = 3;
-        perm4 = 4;
-        perm5 = 5;
-        perm6 = 6;
-        perm7 = 7;
-        perm8 = 8;
+//        perm0 = 0;
+//        perm1 = 1;
+//        perm2 = 2;
+//        perm3 = 3;
+//        perm4 = 4;
+//        perm5 = 5;
+//        perm6 = 6;
+//        perm7 = 7;
+//        perm8 = 8;
         
         /****************** iteration 0 ***********/
 
@@ -1111,7 +1113,7 @@ __global__ void matinv_9x9 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA00);
-        icol0 = perm0;
+//        icol0 = perm0;
         AA00 = tmp;
         AA01 = mulOp (tmp, AA01);
         AA02 = mulOp (tmp, AA02);
@@ -1328,7 +1330,7 @@ __global__ void matinv_9x9 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA11);
-        icol1 = perm1;
+//        icol1 = perm1;
         AA10 = mulOp (tmp, AA10);
         AA11 = tmp;
         AA12 = mulOp (tmp, AA12);
@@ -1530,7 +1532,7 @@ __global__ void matinv_9x9 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA22);
-        icol2 = perm2;
+//        icol2 = perm2;
         AA20 = mulOp (tmp, AA20);
         AA21 = mulOp (tmp, AA21);
         AA22 = tmp;
@@ -1717,7 +1719,7 @@ __global__ void matinv_9x9 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA33);
-        icol3 = perm3;
+//        icol3 = perm3;
         AA30 = mulOp (tmp, AA30);
         AA31 = mulOp (tmp, AA31);
         AA32 = mulOp (tmp, AA32);
@@ -1889,7 +1891,7 @@ __global__ void matinv_9x9 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA44);
-        icol4 = perm4;
+//        icol4 = perm4;
         AA40 = mulOp (tmp, AA40);
         AA41 = mulOp (tmp, AA41);
         AA42 = mulOp (tmp, AA42);
@@ -2046,7 +2048,7 @@ __global__ void matinv_9x9 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA55);
-        icol5 = perm5;
+//        icol5 = perm5;
         AA50 = mulOp (tmp, AA50);
         AA51 = mulOp (tmp, AA51);
         AA52 = mulOp (tmp, AA52);
@@ -2188,7 +2190,7 @@ __global__ void matinv_9x9 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA66);
-        icol6 = perm6;
+//        icol6 = perm6;
         AA60 = mulOp (tmp, AA60);
         AA61 = mulOp (tmp, AA61);
         AA62 = mulOp (tmp, AA62);
@@ -2315,7 +2317,7 @@ __global__ void matinv_9x9 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA77);
-        icol7 = perm7;
+//        icol7 = perm7;
         AA70 = mulOp (tmp, AA70);
         AA71 = mulOp (tmp, AA71);
         AA72 = mulOp (tmp, AA72);
@@ -2419,7 +2421,7 @@ __global__ void matinv_9x9 (float *A, float *B, int batch, float l, bool mult)
 
         /* scale current row */
         tmp = rcpOp (AA88);
-        icol8 = perm8;
+//        icol8 = perm8;
         AA80 = mulOp (tmp, AA80);
         AA81 = mulOp (tmp, AA81);
         AA82 = mulOp (tmp, AA82);
